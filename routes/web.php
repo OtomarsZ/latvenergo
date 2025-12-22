@@ -11,3 +11,7 @@ Route::get('/', function () {
 Route::get('/test-db', function () {
     return Product::all();
 });
+
+use App\Http\Controllers\OrderController;
+
+Route::post('/order', [OrderController::class, 'store']);
