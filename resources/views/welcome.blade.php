@@ -74,28 +74,52 @@
             const stockElement = document.getElementById(`stock-${id}`);
             const stock = parseInt(stockElement.innerText);
             
-            const inCart = cart.filter(item => item.id === id).length;
+            // Pārbaudām vai šāda prece jau ir grozā
+            const existingProduct = cart.find(item => item.id === id);
+            const currentQtyInCart = existingProduct ? existingProduct.qty : 0;
 
-            if (inCart >= stock) {
+            if (currentQtyInCart >= stock) {
                 alert("Nevar pievienot vairāk, nekā ir noliktavā!");
                 return;
             }
 
-            cart.push({ id: id, qty: 1 });
+            if (existingProduct) {
+                // Ja ir, pieskaitām +1 esošajam ierakstam
+                existingProduct.qty += 1;
+            } else {
+                // Ja nav, pievienojam jaunu objektu ar nosaukumu un qty: 1
+                cart.push({ id: id, name: name, qty: 1 });
+            }
             
-            document.getElementById('cart-container').classList.remove('hidden');
-            
+            // Pārzīmējam grozu
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartContainer = document.getElementById('cart-container');
             const list = document.getElementById('cart-list');
-            const li = document.createElement('li');
-            li.className = "text-gray-700 font-medium";
-            li.innerText = `${name} (1 gab.)`;
-            list.appendChild(li);
+            
+            // Iztīrām sarakstu
+            list.innerHTML = '';
+            
+            if (cart.length > 0) {
+                cartContainer.classList.remove('hidden');
+            } else {
+                cartContainer.classList.add('hidden');
+            }
+
+            // Veidojam katru rindiņu no masīva datiem
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "text-gray-700 font-medium";
+                li.innerText = `${item.name} (${item.qty} gab.)`;
+                list.appendChild(li);
+            });
         }
 
         function clearCart() {
             cart = [];
-            document.getElementById('cart-list').innerHTML = '';
-            document.getElementById('cart-container').classList.add('hidden');
+            updateCartUI();
         }
 
         function submitOrder() {
