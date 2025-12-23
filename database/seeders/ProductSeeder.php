@@ -3,27 +3,32 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Product; // Šī rindiņa ir obligāta!
+use App\Models\Product;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Pievienojam pirmo produktu
+        // Izveidojam vairākus produktus uzreiz
         Product::create([
-            'name' => 'Saules paneļu komplekts',
-            'price' => 1200.50,
-            'quantity' => 10
+            'name' => 'LED Spuldze 10W',
+            'description' => 'Energoefektīva A++ klases spuldze mājoklim.',
+            'price' => 4.50,
+            'quantity' => 50
         ]);
 
-        // Pievienojam otro produktu
         Product::create([
             'name' => 'Viedais skaitītājs',
+            'description' => 'Attālināti nolasāms elektroenerģijas skaitītājs.',
             'price' => 85.00,
-            'quantity' => 50
+            'quantity' => 12
+        ]);
+
+        Product::create([
+            'name' => 'Saules paneļu komplekts',
+            'description' => '3kW sistēma privātmājas jumtam.',
+            'price' => 1200.00,
+            'quantity' => 3
         ]);
     }
 }
