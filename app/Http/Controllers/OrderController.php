@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    // 1. PASŪTĪJUMA APSTRĀDE
     public function store(Request $request)
     {
-        // Validējam masīvu "items"
         $request->validate([
             'items' => 'required|array',
             'items.*.id' => 'required|exists:products,id',
@@ -23,11 +23,9 @@ class OrderController extends Controller
                 $totalPrice = 0;
 
                 foreach ($request->items as $item) {
-                    // lockForUpdate neļauj citiem mainīt šo rindu, kamēr mēs strādājam
                     $product = Product::lockForUpdate()->findOrFail($item['id']);
 
                     if ($product->quantity < $item['qty']) {
-                        // Ja kaut viena prece par maz, metam kļūdu un Transaction visu atceļ
                         throw new \Exception("Prece '{$product->name}' nav pietiekamā daudzumā!");
                     }
 
@@ -35,11 +33,10 @@ class OrderController extends Controller
                     $totalPrice += $product->price * $item['qty'];
                 }
 
-                // Izveidojam pasūtījumu tikai tad, ja visas preces bija pieejamas
                 $order = Order::create(['total_price' => $totalPrice]);
 
                 return response()->json([
-                    'message' => 'Pasūtījums veiksmīgi noformēts!',
+                    'message' => 'Pasūtījums veiksmīgs!',
                     'order_id' => $order->id
                 ]);
             });
@@ -48,16 +45,26 @@ class OrderController extends Controller
         }
     }
 
+    // 2. PRODUKTU SARAKSTS PASŪTĪJUMIEM (ja lieto atsevišķu lapu)
+    public function index()
+    {
+        $orders = Order::orderBy('created_at', 'desc')->get();
+        return view('orders', compact('orders'));
+    }
+
+    // 3. JAUNA PRODUKTA PIEVIENOŠANA (Ar aprakstu)
     public function createProduct(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
         ]);
 
         Product::create([
             'name' => $request->name,
+            'description' => $request->description,
             'price' => $request->price,
             'quantity' => $request->quantity,
         ]);

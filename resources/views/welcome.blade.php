@@ -6,41 +6,49 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-10">
-    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
         
         <div class="mb-10 p-6 bg-gray-50 rounded-lg border">
             <h2 class="text-xl font-bold mb-4">Pievienot jaunu produktu</h2>
-            <form action="/products" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form action="/products" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @csrf
                 <input type="text" name="name" placeholder="Nosaukums" class="p-2 border rounded" required>
+                <input type="text" name="description" placeholder="Mazs apraksts" class="p-2 border rounded" required>
                 <input type="number" step="0.01" name="price" placeholder="Cena" class="p-2 border rounded" required>
                 <input type="number" name="quantity" placeholder="Daudzums" class="p-2 border rounded" required>
-                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                    Pievienot
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 md:col-span-2 transition">
+                    Saglabāt produktu noliktavā
                 </button>
             </form>
         </div>
 
         <h1 class="text-2xl font-bold mb-6 text-gray-800">Produktu saraksts</h1>
+
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="border-b bg-gray-50">
                     <th class="py-2 px-4">Nosaukums</th>
+                    <th class="py-2 px-4">Apraksts</th>
                     <th class="py-2 px-4">Cena</th>
                     <th class="py-2 px-4">Noliktavā</th>
-                    <th class="py-2 px-4">Darbība</th>
+                    <th class="py-2 px-4 text-center">Darbība</th>
                 </tr>
             </thead>
             <tbody id="product-table">
                 @foreach($products as $product)
                 <tr class="border-b hover:bg-gray-50">
                     <td class="py-4 px-4 font-bold">{{ $product->name }}</td>
+                    <td class="py-4 px-4 text-gray-600 text-sm">{{ $product->description }}</td>
                     <td class="py-4 px-4">{{ $product->price }} €</td>
                     <td class="py-4 px-4" id="stock-{{ $product->id }}">{{ $product->quantity }}</td>
-                    <td class="py-4 px-4">
-                        <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}')" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-                            Pievienot grozam
-                        </button>
+                    <td class="py-4 px-4 text-center">
+                        @if($product->quantity > 0)
+                            <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}')" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition">
+                                Pievienot grozam
+                            </button>
+                        @else
+                            <span class="text-red-500 font-bold italic">Nav pieejams</span>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -53,7 +61,7 @@
             <div class="flex justify-between items-center">
                 <button onclick="clearCart()" class="text-red-600 hover:underline">Iztīrīt grozu</button>
                 <button onclick="submitOrder()" class="bg-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-700 transition">
-                    Noformēt pasūtījumu (vairākas preces)
+                    Noformēt pasūtījumu
                 </button>
             </div>
         </div>
@@ -63,14 +71,20 @@
         let cart = [];
 
         function addToCart(id, name) {
-            // Pievienojam preci groza masīvam
+            const stockElement = document.getElementById(`stock-${id}`);
+            const stock = parseInt(stockElement.innerText);
+            
+            const inCart = cart.filter(item => item.id === id).length;
+
+            if (inCart >= stock) {
+                alert("Nevar pievienot vairāk, nekā ir noliktavā!");
+                return;
+            }
+
             cart.push({ id: id, qty: 1 });
             
-            // Parādām groza sadaļu
-            const container = document.getElementById('cart-container');
-            container.classList.remove('hidden');
+            document.getElementById('cart-container').classList.remove('hidden');
             
-            // Pievienojam vizuāli sarakstā
             const list = document.getElementById('cart-list');
             const li = document.createElement('li');
             li.className = "text-gray-700 font-medium";
