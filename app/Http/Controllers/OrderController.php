@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    // 1. PASŪTĪJUMA APSTRĀDE
+    // 1. PASŪTĪJUMA APSTRĀDE (AR PREČU DETAĻĀM)
     public function store(Request $request)
     {
         $request->validate([
@@ -21,7 +21,9 @@ class OrderController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 $totalPrice = 0;
+                $orderItemsData = [];
 
+                // 1. Cilpa cauri precēm, lai pārbaudītu atlikumu un aprēķinātu cenu
                 foreach ($request->items as $item) {
                     $product = Product::lockForUpdate()->findOrFail($item['id']);
 
@@ -29,11 +31,32 @@ class OrderController extends Controller
                         throw new \Exception("Prece '{$product->name}' nav pietiekamā daudzumā!");
                     }
 
+                    // Samazinām atlikumu noliktavā
                     $product->decrement('quantity', $item['qty']);
-                    $totalPrice += $product->price * $item['qty'];
+                    
+                    $lineTotal = $product->price * $item['qty'];
+                    $totalPrice += $lineTotal;
+
+                    // Sagatavojam datus ierakstam order_items tabulā
+                    $orderItemsData[] = [
+                        'product_id' => $product->id,
+                        'quantity'   => $item['qty'],
+                        'price'      => $product->price, // Saglabājam cenu, kāda tā bija pirkuma brīdī
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
 
+                // 2. Izveidojam galveno pasūtījumu
                 $order = Order::create(['total_price' => $totalPrice]);
+
+                // 3. Pievienojam pasūtījuma ID katrai precei un ierakstām datubāzē
+                foreach ($orderItemsData as &$data) {
+                    $data['order_id'] = $order->id;
+                }
+                
+                // Ievietojam visas preces vienā piegājienā
+                DB::table('order_items')->insert($orderItemsData);
 
                 return response()->json([
                     'message' => 'Pasūtījums veiksmīgs!',
@@ -45,14 +68,15 @@ class OrderController extends Controller
         }
     }
 
-    // 2. PRODUKTU SARAKSTS PASŪTĪJUMIEM (ja lieto atsevišķu lapu)
+    // 2. PRODUKTU SARAKSTS PASŪTĪJUMIEM
     public function index()
     {
-        $orders = Order::orderBy('created_at', 'desc')->get();
+        // Ielādējam pasūtījumus kopā ar to precēm (lai nebūtu 404 vai tukšums)
+        $orders = Order::with('products')->orderBy('created_at', 'desc')->get();
         return view('orders', compact('orders'));
     }
 
-    // 3. JAUNA PRODUKTA PIEVIENOŠANA (Ar aprakstu)
+    // 3. JAUNA PRODUKTA PIEVIENOŠANA
     public function createProduct(Request $request)
     {
         $request->validate([
