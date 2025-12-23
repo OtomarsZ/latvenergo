@@ -9,27 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    // Šī metode apstrādā PIRKŠANU (poga "Pirkt")
     public function store(Request $request)
     {
-        // 1. Validācija (pārbaudām, vai atsūtīti pareizi dati)
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        // 2. Izmantojam transakciju, lai viss notiktu droši
         return DB::transaction(function () use ($request) {
             $product = Product::findOrFail($request->product_id);
 
-            // 3. Pārbaudām, vai noliktavā pietiek preču
             if ($product->quantity < $request->quantity) {
                 return response()->json(['error' => 'Nepietiekams preču skaits noliktavā!'], 400);
             }
 
-            // 4. Samazinām skaitu noliktavā
             $product->decrement('quantity', $request->quantity);
 
-            // 5. Izveidojam pasūtījumu
             $order = Order::create([
                 'total_price' => $product->price * $request->quantity
             ]);
@@ -40,5 +36,25 @@ class OrderController extends Controller
                 'atlikums' => $product->quantity
             ]);
         });
+    }
+
+    // ŠĪ METODE BIJA TRŪKSTOŠĀ - Tā apstrādā jauna produkta PIEVIENOŠANU
+    public function createProduct(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        // Izveidojam jaunu ierakstu datubāzē
+        Product::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+        ]);
+
+        // Pēc saglabāšanas pāradresējam atpakaļ uz sākumlapu
+        return redirect('/');
     }
 }
