@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Product; // ŠĪ RINDIŅA IR OBLIGĀTA!
 
 Route::get('/', function () {
-    return view('welcome');
+    $products = Product::all();
+    return view('welcome', compact('products'));
 });
 
 // Šis maršruts ļaus mums redzēt datubāzes saturu pārlūkā
