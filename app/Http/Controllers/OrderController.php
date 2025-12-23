@@ -9,36 +9,45 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    // Šī metode apstrādā PIRKŠANU (poga "Pirkt")
     public function store(Request $request)
     {
+        // Validējam masīvu "items"
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:products,id',
+            'items.*.qty' => 'required|integer|min:1',
         ]);
 
-        return DB::transaction(function () use ($request) {
-            $product = Product::findOrFail($request->product_id);
+        try {
+            return DB::transaction(function () use ($request) {
+                $totalPrice = 0;
 
-            if ($product->quantity < $request->quantity) {
-                return response()->json(['error' => 'Nepietiekams preču skaits noliktavā!'], 400);
-            }
+                foreach ($request->items as $item) {
+                    // lockForUpdate neļauj citiem mainīt šo rindu, kamēr mēs strādājam
+                    $product = Product::lockForUpdate()->findOrFail($item['id']);
 
-            $product->decrement('quantity', $request->quantity);
+                    if ($product->quantity < $item['qty']) {
+                        // Ja kaut viena prece par maz, metam kļūdu un Transaction visu atceļ
+                        throw new \Exception("Prece '{$product->name}' nav pietiekamā daudzumā!");
+                    }
 
-            $order = Order::create([
-                'total_price' => $product->price * $request->quantity
-            ]);
+                    $product->decrement('quantity', $item['qty']);
+                    $totalPrice += $product->price * $item['qty'];
+                }
 
-            return response()->json([
-                'message' => 'Pasūtījums veiksmīgs!',
-                'order_id' => $order->id,
-                'atlikums' => $product->quantity
-            ]);
-        });
+                // Izveidojam pasūtījumu tikai tad, ja visas preces bija pieejamas
+                $order = Order::create(['total_price' => $totalPrice]);
+
+                return response()->json([
+                    'message' => 'Pasūtījums veiksmīgi noformēts!',
+                    'order_id' => $order->id
+                ]);
+            });
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
-    // ŠĪ METODE BIJA TRŪKSTOŠĀ - Tā apstrādā jauna produkta PIEVIENOŠANU
     public function createProduct(Request $request)
     {
         $request->validate([
@@ -47,14 +56,12 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        // Izveidojam jaunu ierakstu datubāzē
         Product::create([
             'name' => $request->name,
             'price' => $request->price,
             'quantity' => $request->quantity,
         ]);
 
-        // Pēc saglabāšanas pāradresējam atpakaļ uz sākumlapu
         return redirect('/');
     }
 }
