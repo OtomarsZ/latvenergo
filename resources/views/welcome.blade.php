@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Latvenergo Veikals</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/tailwind.js') }}"></script>
 </head>
 <body class="bg-gray-100 p-10">
     <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -44,7 +44,7 @@
                     <td class="py-4 px-4 text-center">
                         @if($product->quantity > 0)
                             <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}')" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition">
-                                Pievienot grozam
+                                Pievienot grozam vienu
                             </button>
                         @else
                             <span class="text-red-500 font-bold italic">Nav pieejams</span>
