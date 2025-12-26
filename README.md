@@ -1,4 +1,4 @@
-# Latvenergo E-veikala Prototips (Laravel 12)
+Latvenergo E-veikala Prototips (Laravel 12)
 
 Šis ir e-komercijas sistēmas prototips, kas izstrādāts, izmantojot jaunāko **Laravel 12** ietvaru. Projekts demonstrē darbu ar datubāzēm, modeļiem un kontrolieriem, nodrošinot pamata funkcionalitāti preču iegādei.
 
@@ -8,6 +8,7 @@
 - **Datu integritāte:** Izmantotas datubāzes transakcijas (`DB::transaction`), nodrošinot, ka pasūtījums tiek izveidots tikai tad, ja noliktavas atlikums ir veiksmīgi samazināts.
 - **Datu bāzes aizpilde:** Izveidots `ProductSeeder` ērtai testa datu ģenerēšanai.
 
+<<<<<<< HEAD
 
 ## Uzstādīšana
 
@@ -28,6 +29,15 @@
 
 ## Uzstādīšana
 
+=======
+## Noliktavas web servera Tehnoloģijas
+- PHP 8.2+
+- Laravel 12.x
+- MySQL
+
+## Uzstādīšana
+
+>>>>>>> a8a02e881ee47cc235346a6e49538a997aed23fd
 1. Klonēt projektu mapē kurā glabāsies projekt faili:
    Ar CMD aizejam uz mapi kurā tiks izvietoti prototipa faili (piemēram C:/projekti).
    Kad mape atvērta tajā izpildam komandas ar CMD vai termināli
@@ -60,4 +70,8 @@ un visus failus (mape vendor) iekopējam manuāli.
    - php artisan serve
 
 8. Tad ja mums seederis nav nostrādājis un nav redzami 3 piemēra pasūtāmie produkti, tad izpildam komandu:
+<<<<<<< HEAD
    - php artisan db:seed --class=ProductSeeder
+=======
+   - php artisan db:seed --class=ProductSeeder
+>>>>>>> a8a02e881ee47cc235346a6e49538a997aed23fd
