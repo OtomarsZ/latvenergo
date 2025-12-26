@@ -70,34 +70,30 @@
     <script>
         let cart = [];
 
-        function addToCart(id, name) {
-            const stockElement = document.getElementById(`stock-${id}`);
-            const stock = parseInt(stockElement.innerText);
-            
-            // Pārbaudām vai šāda prece jau ir grozā
-            const existingProduct = cart.find(item => item.id === id);
-            const currentQtyInCart = existingProduct ? existingProduct.qty : 0;
+function addToCart(id, name) {
+    const stockElement = document.getElementById(`stock-${id}`);
+    // Svarīgi: Noliktavas atlikums ir tas, kas ir grozā + tas, kas vēl palicis tabulā
+    const currentVisualStock = parseInt(stockElement.innerText);
+    
+    // Ja tabulā jau ir 0 tad tiešām nevar pievienot
+    if (currentVisualStock <= 0) {
+        alert("Nevar pievienot vairāk nekā ir noliktavā!");
+        return;
+    }
 
-            if (currentQtyInCart >= stock) {
-                alert("Nevar pievienot vairāk nekā ir noliktavā!");
-                return;
-            }
+    const existingProduct = cart.find(item => item.id === id);
 
-            if (existingProduct) {
-                // Ja ir, pieskaitām +1 esošajam ierakstam
-                existingProduct.qty += 1;
-            } else {
-                // Ja nav, pievienojam jaunu objektu ar nosaukumu un qty: 1
-                cart.push({ id: id, name: name, qty: 1 });
-            }
-            
-            // --- JAUNĀ DAĻA: Vizuāli samazinām skaitu tabulā ---
-           stockElement.innerText = stock - 1; 
-           // --------------------------------------------------
-            
-            // Pārzīmējam grozu
-            updateCartUI();
-        }
+    if (existingProduct) {
+        existingProduct.qty += 1;
+    } else {
+        cart.push({ id: id, name: name, qty: 1 });
+    }
+    
+    // Samazinām vizuālo skaitu tabulā
+    stockElement.innerText = currentVisualStock - 1;
+    
+    updateCartUI();
+}
 
         function updateCartUI() {
             const cartContainer = document.getElementById('cart-container');
