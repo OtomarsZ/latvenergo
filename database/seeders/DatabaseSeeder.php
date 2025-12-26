@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Šeit mēs izsaucam tavu izveidoto ProductSeeder
+        // Šeit mēs izsaucam izveidoto ProductSeeder
         $this->call([
             ProductSeeder::class,
         ]);
