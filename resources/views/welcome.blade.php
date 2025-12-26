@@ -30,8 +30,8 @@
                     <th class="py-2 px-4">Nosaukums</th>
                     <th class="py-2 px-4">Apraksts</th>
                     <th class="py-2 px-4">Cena</th>
-                    <th class="py-2 px-4">Noliktavā</th>
-                    <th class="py-2 px-4 text-center">Darbība</th>
+                    <th class="py-2 px-4">Preces Noliktavā</th>
+                    <th class="py-2 px-4 text-center"></th>
                 </tr>
             </thead>
             <tbody id="product-table">
@@ -79,7 +79,7 @@
             const currentQtyInCart = existingProduct ? existingProduct.qty : 0;
 
             if (currentQtyInCart >= stock) {
-                alert("Nevar pievienot vairāk, nekā ir noliktavā!");
+                alert("Nevar pievienot vairāk nekā ir noliktavā!");
                 return;
             }
 
@@ -90,6 +90,10 @@
                 // Ja nav, pievienojam jaunu objektu ar nosaukumu un qty: 1
                 cart.push({ id: id, name: name, qty: 1 });
             }
+            
+            // --- JAUNĀ DAĻA: Vizuāli samazinām skaitu tabulā ---
+           stockElement.innerText = stock - 1; 
+           // --------------------------------------------------
             
             // Pārzīmējam grozu
             updateCartUI();
@@ -120,6 +124,8 @@
         function clearCart() {
             cart = [];
             updateCartUI();
+            // Atsvaidzinām lapu, lai atgrieztu skaitļus tabulā no datubāzes
+            location.reload();
         }
 
         function submitOrder() {
