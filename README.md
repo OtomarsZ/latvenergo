@@ -22,6 +22,8 @@ Latvenergo E-veikala Prototips (Laravel 12)
 - **Datu bāzes aizpilde:** Izveidots `ProductSeeder` ērtai testa datu ģenerēšanai.
 
 ## Noliktavas web servera prasības
+- Composer
+- GIT
 - PHP 8.2+
 - Laravel 12.x
 
