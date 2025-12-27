@@ -32,22 +32,26 @@ Latvenergo E-veikala Prototips (Laravel 12)
 1. Klonēt projektu mapē kurā glabāsies projekt faili:
    Ar CMD aizejam uz mapi kurā tiks izvietoti prototipa faili (piemēram C:/projekti).
    Kad mape atvērta tajā izpildam komandas ar CMD vai termināli:
-   git clone https://github.com/OtomarsZ/latvenergo.git
-   cd latvenergo
+
+git clone https://github.com/OtomarsZ/latvenergo.git
+
+cd latvenergo
 
 3. Laravel faili netiek glabāti Gitā, tāpēc tie ir jāuzstāda no jauna ar komandu:
-      composer install
 
-5. Konfigurācijas faila (.env) izveide:
-       copy .env.example .env
+composer install
 
-7. Noģenerējam unikālu aplikācijas atslēgu:
-     php artisan key:generate
+4. Konfigurācijas faila (.env) izveide:
 
-9. Tabulu izveide un parauga datu "iebarošana" tajā (Seeder):
-        php artisan migrate --seed
+copy .env.example .env
 
-11. Pārbaudam vai .env failā parametri SESSION_DRIVER=file un CACHE_STORE=file
+5. Noģenerējam unikālu aplikācijas atslēgu:
+
+php artisan key:generate
+
+6. Tabulu izveide un parauga datu "iebarošana" tajā (Seeder):
+
+php artisan migrate --seed
     
-12. Kad visas komandas izpildītas tad mēs proojektu varam palaist ar komandu:
+7. Kad visas komandas izpildītas tad mēs projektu varam palaist ar komandu:
     php artisan serve
