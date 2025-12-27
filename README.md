@@ -38,7 +38,7 @@ Latvenergo E-veikala Prototips (Laravel 12)
 2. Laravel faili netiek glabāti Gitā, tāpēc tie ir jāuzstāda no jauna ar komandu:
    composer install
 
-3. Konfigurācijas faila (.env) izveide
+3. Konfigurācijas faila (.env) izveide:
     copy .env.example .env
 
 4. Noģenerējam unikālu aplikācijas atslēgu:
