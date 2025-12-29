@@ -36,21 +36,21 @@ git clone https://github.com/OtomarsZ/latvenergo.git
 
 cd latvenergo
 
-3. Laravel faili netiek glabāti Gitā, tāpēc tie ir jāuzstāda no jauna ar komandu:
+2. Laravel faili netiek glabāti Gitā, tāpēc tie ir jāuzstāda no jauna ar komandu:
 
 composer install
 
-4. Konfigurācijas faila (.env) izveide:
+3. Konfigurācijas faila (.env) izveide:
 
 copy .env.example .env
 
-5. Noģenerējam unikālu aplikācijas atslēgu:
+4. Noģenerējam unikālu aplikācijas atslēgu:
 
 php artisan key:generate
 
-6. Tabulu izveide un parauga datu "iebarošana" tajā (Seeder):
+5. Tabulu izveide un parauga datu "iebarošana" tajā (Seeder):
 
 php artisan migrate --seed
     
-7. Kad visas komandas izpildītas tad mēs projektu varam palaist ar komandu:
+6. Kad visas komandas izpildītas tad mēs projektu varam palaist ar komandu:
     php artisan serve
