@@ -5,20 +5,21 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Product;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ProductTest extends TestCase
 {
-    use RefreshDatabase; // Šis automātiski iztīra datubāzi pēc katra testa
+    use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function sākumlapa_ielādējas_veiksmīgi()
     {
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('Latvenergo Veikals'); // Pārbauda, vai teksts ir lapā
+        $response->assertSee('Latvenergo Veikals');
     }
 
-    /** @test */
+    #[Test]
     public function var_pievienot_jaunu_produktu_noliktavā()
     {
         $produktaDati = [
@@ -28,15 +29,12 @@ class ProductTest extends TestCase
             'quantity' => 5
         ];
 
-        // Veicam POST pieprasījumu (tāpat kā tava forma welcome lapā)
         $response = $this->post('/products', $produktaDati);
 
-        // Pārbaudām, vai dati tiešām ir datubāzē
         $this->assertDatabaseHas('products', [
             'name' => 'Saules panelis 400W'
         ]);
 
-        // Pārbaudām, vai mūs pārmeta atpakaļ (redirect)
         $response->assertStatus(302);
     }
 }
