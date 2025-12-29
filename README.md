@@ -51,6 +51,10 @@ php artisan key:generate
 5. Tabulu izveide un parauga datu "iebarošana" tajā (Seeder):
 
 php artisan migrate --seed
-    
-6. Kad visas komandas izpildītas tad mēs projektu varam palaist ar komandu:
-    php artisan serve
+
+6. Pirms projojekta pacelšanas veicam sistēmas darbības testus ar komandu
+
+php artisan test
+   
+8. Tad ja visi testi  mēs projektu varam palaist ar komandu:
+php artisan serve
