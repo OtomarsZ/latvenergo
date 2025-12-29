@@ -56,5 +56,5 @@ php artisan migrate --seed
 
 php artisan test
    
-8. Tad ja visi testi  mēs projektu varam palaist ar komandu:
+8. Tad ja visi testi beigušies bez kļūdām mēs projektu varam palaist ar komandu:
 php artisan serve
