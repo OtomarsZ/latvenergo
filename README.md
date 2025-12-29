@@ -9,7 +9,6 @@ Latvenergo E-veikala Prototips (Laravel 12)
 - **Datu bāzes aizpilde:** Izveidots `ProductSeeder` ērtai testa datu ģenerēšanai.
 
 
-## Uzstādīšana
 
 1. Latvenergo E-veikala Prototips (Laravel 12)
 
